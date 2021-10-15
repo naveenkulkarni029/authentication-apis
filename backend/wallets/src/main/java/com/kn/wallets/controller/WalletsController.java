@@ -24,12 +24,12 @@ public class WalletsController {
 		this.walletsService = walletsService;
 	}
 
-	@GetMapping(value = "/wallets", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/wallets")
 	public ResponseEntity<List<Wallet>> getWallets() {
 		return ResponseEntity.ok(walletsService.getWallets());
 	}
 
-	@GetMapping(value="/wallets/{walletId}")
+	@GetMapping(value = "/wallets/{walletId}")
 	public ResponseEntity<Wallet> getWallet(@PathVariable long walletId) {
 		return ResponseEntity.ok(walletsService.getWalletById(walletId));
 	}

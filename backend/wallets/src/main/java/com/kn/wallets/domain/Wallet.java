@@ -24,7 +24,7 @@ public class Wallet implements Serializable{
 	@Column(name = "wallet_id")
 	private Long walletId;
 	
-	@Column(name = "name")
+	@Column(name = "wallet_name")
 	private String name;
 
 	public Wallet() {
