@@ -1,6 +1,7 @@
 package com.kn.wallets.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,14 @@ public class WalletsServiceImpl implements WalletsService {
 
 	@Override
 	public Wallet getWalletById(long walletId) {
-		return walletsRepository.findById(walletId).orElseThrow();
+		Optional<Wallet> wallet = walletsRepository.findById(walletId);
+		
+		if(wallet.isPresent()) {
+			return wallet.get();
+		}
+		
+		return null;
+		
 	}
 
 }
