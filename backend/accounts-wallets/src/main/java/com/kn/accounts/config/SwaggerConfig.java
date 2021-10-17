@@ -1,4 +1,4 @@
-package com.kn.wallets.config;
+package com.kn.accounts.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

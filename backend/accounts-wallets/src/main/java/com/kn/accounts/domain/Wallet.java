@@ -1,4 +1,4 @@
-package com.kn.wallets.domain;
+package com.kn.accounts.domain;
 
 import java.io.Serializable;
 import java.util.Objects;

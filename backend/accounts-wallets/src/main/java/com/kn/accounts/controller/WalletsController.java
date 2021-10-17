@@ -1,4 +1,4 @@
-package com.kn.wallets.controller;
+package com.kn.accounts.controller;
 
 import java.util.List;
 
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kn.wallets.domain.Wallet;
-import com.kn.wallets.service.WalletsService;
+import com.kn.accounts.domain.Wallet;
+import com.kn.accounts.service.WalletsService;
 
 @RestController
 @RequestMapping("/v1")

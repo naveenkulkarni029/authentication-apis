@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.kn</groupId>
-	<artifactId>wallets</artifactId>
+	<artifactId>accounts-wallets</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>wallets</name>
-	<description>Kuehne Nagel Wallets</description>
+	<name>accounts-wallets</name>
+	<description>Kuehne Nagel accounts-wallets</description>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>

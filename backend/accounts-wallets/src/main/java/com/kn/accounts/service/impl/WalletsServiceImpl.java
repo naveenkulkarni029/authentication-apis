@@ -1,13 +1,13 @@
-package com.kn.wallets.service.impl;
+package com.kn.accounts.service.impl;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.kn.wallets.domain.Wallet;
-import com.kn.wallets.repository.WalletsRepository;
-import com.kn.wallets.service.WalletsService;
+import com.kn.accounts.domain.Wallet;
+import com.kn.accounts.repository.WalletsRepository;
+import com.kn.accounts.service.WalletsService;
 
 @Service
 public class WalletsServiceImpl implements WalletsService {

@@ -1,8 +1,8 @@
-package com.kn.wallets.service;
+package com.kn.accounts.service;
 
 import java.util.List;
 
-import com.kn.wallets.domain.Wallet;
+import com.kn.accounts.domain.Wallet;
 
 public interface WalletsService {
 
