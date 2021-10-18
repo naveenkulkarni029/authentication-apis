@@ -1,0 +1,9 @@
+{
+  "emailId": "naveen@gmail.com",
+  "name": "Naveen",
+  "transactions": [
+    {
+      "transactionAmount": 500
+    }
+  ]
+}

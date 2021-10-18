@@ -1,0 +1,42 @@
+[
+  {
+    "walletId": 2,
+    "name": "Akshay",
+    "amount": 300,
+    "emailId": "akshay@gmail.com",
+    "transactions": [
+      {
+        "name": "first Transaction",
+        "type": "CREDIT",
+        "transactionAmount": 500,
+        "transactionReferenceId": "7baeb023-4f8c-4461-ac66-38f2ce14932b/SELF/CREDIT"
+      },
+      {
+        "name": "string",
+        "type": "DEBIT",
+        "transactionAmount": 200,
+        "transactionReferenceId": "1cd18f5a-f676-4def-91e8-f04cf45e2082/naav@gmail.com/DEBIT"
+      }
+    ]
+  },
+  {
+    "walletId": 1,
+    "name": "Naveen",
+    "amount": 700,
+    "emailId": "naav@gmail.com",
+    "transactions": [
+      {
+        "name": "first Transaction",
+        "type": "CREDIT",
+        "transactionAmount": 500,
+        "transactionReferenceId": "97c94266-c1db-494d-b8f9-dc3fa4ee26fc/SELF/CREDIT"
+      },
+      {
+        "name": "string",
+        "type": "CREDIT",
+        "transactionAmount": 200,
+        "transactionReferenceId": "1cd18f5a-f676-4def-91e8-f04cf45e2082/akshay@gmail.com/CREDIT"
+      }
+    ]
+  }
+]
