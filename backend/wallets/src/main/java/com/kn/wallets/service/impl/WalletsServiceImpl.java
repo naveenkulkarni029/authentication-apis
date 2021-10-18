@@ -92,6 +92,11 @@ public class WalletsServiceImpl implements WalletsService {
 			log.info("Cannot transfer Zero Amount");
 			throw new ZeroAmountTransferException("Cannot transfer Zero Amount");
 		}
+
+		if (transaction.getTransactionAmount() < 0) {
+			log.info("Negative Amount not allowed");
+			throw new NegativeAmountException("Negative Amount not allowed");
+		}
 		Wallet wallet = getWalletById(walletId);
 		if (TransactionType.DEBIT.equals(transaction.getType())) {
 			long walletAmount = wallet.getAmount();
@@ -125,6 +130,12 @@ public class WalletsServiceImpl implements WalletsService {
 			log.info("Cannot transfer Zero Amount");
 			throw new ZeroAmountTransferException("Cannot transfer Zero Amount");
 		}
+
+		if (transaction.getTransactionAmount() < 0) {
+			log.info("Negative Amount not allowed");
+			throw new NegativeAmountException("Negative Amount not allowed");
+		}
+
 		Wallet sourceWallet = getWalletById(walletId);
 		long sourceWalletAmount = sourceWallet.getAmount();
 		long transactionAmount = transaction.getTransactionAmount();
