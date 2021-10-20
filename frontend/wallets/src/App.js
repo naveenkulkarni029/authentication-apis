@@ -37,7 +37,7 @@ function App() {
         <Switch>
           <Route exact path={["/", "/wallets"]} component={WalletsList} />
           <Route exact path="/create" component={CreateWallet} />
-          <Route path="/wallets/:id" component={Wallet} />
+          <Route path="/wallet/:id" component={Wallet} />
           <Route path="/walletdetails/:id" component={WalletDetails} />
           <Route path="/fundtransfer/:id" component={WalletFundTransfer} />
         </Switch>
