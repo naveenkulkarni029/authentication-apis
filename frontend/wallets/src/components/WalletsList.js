@@ -24,7 +24,7 @@ const WalletsList = (props) => {
 
   const openWallet = (rowIndex) => {
     const walletId = WalletsRef.current[rowIndex].walletId;
-    props.history.push("/wallets/" + walletId);
+    props.history.push("/wallet/" + walletId);
   };
 
   const openWalletDetails = (rowIndex) => {
