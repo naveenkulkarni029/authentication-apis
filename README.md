@@ -1,6 +1,6 @@
 # Kuehne-Nagel-Project: Wallets Application
 
-The Repository helps build and run Wallets Application SERVER and CLIENT. The Wallets application is developed using Java 8, Spring Boot, H2 Database on the Server-Side and ReactJS on the Client-Side. The application Creates, Reads, Updates( Add / Withdraw  money ) wallet and does Fund Transfer between wallets by consuming the Server-Side API's. In the Client-Side, the Server-Side API's are consumed using Axios, display and modify data with Router & Bootstrap.
+The Repository helps build and run Wallets Application SERVER and CLIENT. The Wallets application is developed using Java 8, Spring Boot, H2 Database on the Server-Side, ReactJS and [react-table](https://github.com/tannerlinsley/react-table) ( tabular format ) on the Client-Side. The application Creates, Reads, Updates( Add / Withdraw  money ) wallet and does Fund Transfer between wallets by consuming the Server-Side API's. In the Client-Side, the Server-Side API's are consumed using Axios, display and modify data with Router & Bootstrap.
 
 - Each Wallet has id, name, email, amount and list of transactions.
 - Each Transaction has id, name, type ( CREDIT / DEBIT ), transactionAmount, transactionReferenceId.
