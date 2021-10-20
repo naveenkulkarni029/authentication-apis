@@ -1,6 +1,6 @@
 # Wallets Server
 
-The folder helps develop Wallets Server Application using Java 8, Spring Boot, H2 Database, maven build and run the application. This application Creates, Reads, Updates( Add / Withdraw  money ) wallet and does Fund Transfer between wallets by consuming the Server-Side API's.
+The folder helps develop Wallets Server Application using Java 8, Spring Boot, H2 Database, maven build and run the application. This application Creates, Reads, Updates( Add / Withdraw  money ) wallet and does Fund Transfer between wallets by exposing the Server-Side API's.
 
 - Each Wallet has id, name, email, amount and list of transactions.
 - Each Transaction has id, name, type ( CREDIT / DEBIT ), transactionAmount, transactionReferenceId.
