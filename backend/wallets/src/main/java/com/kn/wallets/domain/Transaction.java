@@ -50,12 +50,10 @@ public class Transaction implements Serializable {
 
 	@ApiModelProperty(hidden = true)
 	@Column(nullable = false, updatable = false)
-	@JsonIgnore
 	private String createdBy;
 
 	@ApiModelProperty(hidden = true)
 	@Column(nullable = false, updatable = false)
-	@JsonIgnore
 	private LocalDateTime created = LocalDateTime.now();
 
 	public Transaction() {

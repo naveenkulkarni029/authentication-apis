@@ -44,12 +44,6 @@ public class ServiceControllerAdvice {
 		return ResponseEntity.badRequest().body(createMessage(exception.getLocalizedMessage()));
 	}
 
-	@ExceptionHandler(value = { TransactionIsEmptyException.class })
-	public ResponseEntity<Object> handleTransactionIsEmptyException(TransactionIsEmptyException exception) {
-		log.info(exception.getLocalizedMessage(), exception);
-		return ResponseEntity.badRequest().body(createMessage(exception.getLocalizedMessage()));
-	}
-
 	@ExceptionHandler(value = { ZeroAmountTransferException.class })
 	public ResponseEntity<Object> handleZeroAmountTransferException(ZeroAmountTransferException exception) {
 		log.info(exception.getLocalizedMessage(), exception);

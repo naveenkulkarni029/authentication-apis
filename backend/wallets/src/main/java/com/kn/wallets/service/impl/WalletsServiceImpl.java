@@ -2,6 +2,8 @@ package com.kn.wallets.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -52,6 +54,10 @@ public class WalletsServiceImpl implements WalletsService {
 		Wallet wallet = walletOptional
 				.orElseThrow(() -> new WalletNotFoundException("walletId " + walletId + " not found"));
 		log.info("Service fetched wallet retrieve wallet: Id: " + walletId + " is " + wallet);
+		Comparator<Transaction> reverseComparator = (t1, t2) -> {
+			return (t2.getCreated()).compareTo(t1.getCreated());
+		};
+		Collections.sort(wallet.getTransactions(), reverseComparator);
 		return wallet;
 	}
 
@@ -59,27 +65,24 @@ public class WalletsServiceImpl implements WalletsService {
 	public Wallet save(Wallet wallet) {
 		log.info("Service called to save wallet: " + wallet);
 		try {
-			if (!CollectionUtils.isEmpty(wallet.getTransactions())) {
-				if (wallet.getTransactions().get(0).getTransactionAmount() < 0) {
-					log.info("Negative Amount not allowed while creating a wallet");
-					throw new NegativeAmountException("Negative Amount not allowed while creating a wallet");
-				}
+			if (wallet.getAmount() < 0) {
+				log.info("Negative Amount not allowed while creating a wallet");
+				throw new NegativeAmountException("Negative Amount not allowed while creating a wallet");
+			}
+			if (wallet.getAmount() > 0) {
 				List<Transaction> transactions = new ArrayList<>();
-				Transaction transaction = wallet.getTransactions().get(0);
-				transaction.setName("first Transaction");
+				Transaction transaction = new Transaction();
+				transaction.setName("First Transaction");
 				transaction.setType(TransactionType.CREDIT);
 				transaction.setTransactionReferenceId(UUID.randomUUID().toString() + "/SELF/" + TransactionType.CREDIT);
 				transaction.setCreatedBy("SELF");
+				transaction.setTransactionAmount(wallet.getAmount());
 				transactions.add(transaction);
-				wallet.setAmount(transaction.getTransactionAmount());
 				wallet.setTransactions(transactions);
-				wallet.setCreatedBy(wallet.getEmailId());
-				log.info("wallet object before calling the repository: " + wallet);
-				return walletsRepository.saveAndFlush(wallet);
-			} else {
-				log.info("Transaction Cannot Be Empty");
-				throw new TransactionIsEmptyException("Transaction Cannot Be Empty");
 			}
+			wallet.setCreatedBy(wallet.getEmailId());
+			log.info("wallet object before calling the repository: " + wallet);
+			return walletsRepository.saveAndFlush(wallet);
 		} catch (DataIntegrityViolationException ex) {
 			log.info("email id already exists", ex);
 			throw new DuplicateWalletException("Email id already Exists");
@@ -104,9 +107,9 @@ public class WalletsServiceImpl implements WalletsService {
 			if (transactionAmount <= walletAmount) {
 				wallet.setAmount(walletAmount - transactionAmount);
 			} else {
-				log.info("Debit amoumt Requested on Wallet is greater than Available amount in wallet ");
+				log.info("Debit amount Requested on Wallet is greater than Available amount in wallet ");
 				throw new NegativeAmountException(
-						"Debit amoumt Requested on Wallet is greater than Available amount in wallet ");
+						"Debit amount Requested on Wallet is greater than Available amount in wallet ");
 			}
 		}
 		if (TransactionType.CREDIT.equals(transaction.getType())) {
@@ -117,7 +120,12 @@ public class WalletsServiceImpl implements WalletsService {
 		wallet.getTransactions().add(transaction);
 		wallet.setModified(LocalDateTime.now());
 		wallet.setModifiedBy("SELF");
-		return walletsRepository.saveAndFlush(wallet);
+		Wallet responseWallet = walletsRepository.saveAndFlush(wallet);
+		Comparator<Transaction> reverseComparator = (t1, t2) -> {
+			return (t2.getCreated()).compareTo(t1.getCreated());
+		};
+		Collections.sort(responseWallet.getTransactions(), reverseComparator);
+		return responseWallet;
 	}
 
 	@Override
@@ -161,6 +169,9 @@ public class WalletsServiceImpl implements WalletsService {
 
 			long targetWalletAmount = targetWallet.getAmount();
 			targetWallet.setAmount(targetWalletAmount + transactionAmount);
+			targetWallet.setModified(LocalDateTime.now());
+			targetWallet.setModifiedBy(sourceWallet.getEmailId());
+			
 			Transaction targetTransaction = new Transaction();
 			targetTransaction.setType(TransactionType.CREDIT);
 
@@ -175,10 +186,10 @@ public class WalletsServiceImpl implements WalletsService {
 			wallets.add(sourceWallet);
 			wallets.add(targetWallet);
 		} else {
-			log.info("Debit amoumt Requested on Wallet is greater than Available amount in wallet ");
+			log.info("Debit amount Requested on Wallet is greater than Available amount in wallet ");
 			throw new NegativeAmountException(
-					"Debit amoumt Requested on Wallet is greater than Available amount in wallet ");
-		}
+					"Debit amount Requested on Wallet is greater than Available amount in wallet ");
+		} 
 		return walletsRepository.saveAllAndFlush(wallets);
 	}
 

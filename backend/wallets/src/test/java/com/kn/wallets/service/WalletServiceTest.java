@@ -87,18 +87,9 @@ public class WalletServiceTest {
 	}
 
 	@Test
-	public void saveWalletTransactionisEmptyExceptionTest() {
-		Assertions.assertThrows(TransactionIsEmptyException.class, () -> walletService.save(new Wallet()));
-	}
-
-	@Test
 	public void saveWalletNegativeAmountExceptionTest() {
 		Wallet wallet = new Wallet();
-		List<Transaction> transactions = new ArrayList<>();
-		Transaction transaction = new Transaction();
-		transaction.setTransactionAmount(-10);
-		transactions.add(transaction);
-		wallet.setTransactions(transactions);
+		wallet.setAmount(-10);
 		Assertions.assertThrows(NegativeAmountException.class, () -> walletService.save(wallet));
 	}
 
