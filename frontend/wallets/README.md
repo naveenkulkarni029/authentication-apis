@@ -59,7 +59,7 @@ docker-compose up -d --build
 Once the container is built and running, visit [http://localhost:3000](http://localhost:3000)
 in your web browser to view the K+N Wallets UI.
 
-To rebuild the docs after you made changes, run the `docker-compose up` command
+To rebuild the application after you made changes, run the `docker-compose up` command
 again. This rebuilds the application, and updates the container with your changes:
 
 ```bash
