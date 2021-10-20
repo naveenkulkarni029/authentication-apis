@@ -8,12 +8,16 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.Fetch;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -44,28 +48,29 @@ public class Wallet implements Serializable {
 	@Column(name = "email_id")
 	private String emailId;
 
-	@OneToMany(targetEntity = Transaction.class, cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = Transaction.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "wallet_id")
 	private List<Transaction> transactions = new ArrayList<>();
-	
-	@ApiModelProperty(hidden = true)
-    @Column(nullable = false, updatable = false)
-	@JsonIgnore
-    private String createdBy;
 
 	@ApiModelProperty(hidden = true)
-    @Column(nullable = false, updatable = false)
+	@Column(nullable = false, updatable = false)
 	@JsonIgnore
-    private LocalDateTime created = LocalDateTime.now();
+	private String createdBy;
 
 	@ApiModelProperty(hidden = true)
-    @Column(nullable = true)
+	@Column(nullable = false, updatable = false)
 	@JsonIgnore
-    private String modifiedBy;
+	private LocalDateTime created = LocalDateTime.now();
 
 	@ApiModelProperty(hidden = true)
-    @Column(nullable = true)
+	@Column(nullable = true)
 	@JsonIgnore
-    private LocalDateTime modified;
+	private String modifiedBy;
+
+	@ApiModelProperty(hidden = true)
+	@Column(nullable = true)
+	@JsonIgnore
+	private LocalDateTime modified;
 
 	public Wallet() {
 		super();
@@ -214,6 +219,5 @@ public class Wallet implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
+
 }
