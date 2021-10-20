@@ -39,7 +39,7 @@ const Wallet = walletDetails => {
   };
 
   const openWallet = (walletId) => {
-    walletDetails.history.push("/wallets/" + walletId);
+    walletDetails.history.push("/wallet/" + walletId);
   };
 
   const openWalletTransfer = (walletId) => {
