@@ -70,3 +70,7 @@ if the DB connection fails with an error. Validate if the password field is kept
 ```
 jdbc:h2:mem:testdb
 ```
+
+## Class Diagram
+
+![Wallets-Class-Diagram](https://github.com/naveenkulkarni029/kuehne-nagel-project/blob/master/backend/wallets/class-daigram.PNG)
