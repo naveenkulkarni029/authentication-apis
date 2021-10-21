@@ -34,26 +34,26 @@ public class Transaction implements Serializable {
 	@JsonIgnore
 	private long transactionId;
 
-	@Column(name = "transaction_name")
-	private String name;
+	@Column(name = "transaction_message", nullable = false)
+	private String message;
 
 	@Column(name = "transaction_type")
 	@Enumerated(EnumType.STRING)
 	private TransactionType type;
 
-	@Column(name = "transaction_amount")
+	@Column(name = "transaction_amount", nullable = false)
 	private long transactionAmount;
 
 	@ApiModelProperty(hidden = true)
-	@Column(name = "transaction_reference_id")
+	@Column(name = "transaction_reference_id", nullable = false)
 	private String transactionReferenceId;
 
 	@ApiModelProperty(hidden = true)
-	@Column(nullable = false, updatable = false)
+	@Column(nullable = false, updatable = false, name = "create_by")
 	private String createdBy;
 
 	@ApiModelProperty(hidden = true)
-	@Column(nullable = false, updatable = false)
+	@Column(nullable = false, updatable = false, name = "create_on")
 	private LocalDateTime created = LocalDateTime.now();
 
 	public Transaction() {
@@ -69,12 +69,12 @@ public class Transaction implements Serializable {
 		this.transactionId = transactionId;
 	}
 
-	public String getName() {
-		return name;
+	public String getMessage() {
+		return message;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	public TransactionType getType() {
@@ -123,7 +123,7 @@ public class Transaction implements Serializable {
 		int result = 1;
 		result = prime * result + ((created == null) ? 0 : created.hashCode());
 		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((message == null) ? 0 : message.hashCode());
 		result = prime * result + (int) (transactionAmount ^ (transactionAmount >>> 32));
 		result = prime * result + (int) (transactionId ^ (transactionId >>> 32));
 		result = prime * result + ((transactionReferenceId == null) ? 0 : transactionReferenceId.hashCode());
@@ -150,10 +150,10 @@ public class Transaction implements Serializable {
 				return false;
 		} else if (!createdBy.equals(other.createdBy))
 			return false;
-		if (name == null) {
-			if (other.name != null)
+		if (message == null) {
+			if (other.message != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!message.equals(other.message))
 			return false;
 		if (transactionAmount != other.transactionAmount)
 			return false;

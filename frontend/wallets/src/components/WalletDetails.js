@@ -12,16 +12,23 @@ const Wallet = walletDetails => {
   };
   const [currentWallet, setCurrentWallet] = useState(initialWalletState);
 
-  const getWallet = id => {
-    WalletDataService.get(id)
+  const getWallet = walletId => {
+    const idRegex = /^\d+$/;
+    if(idRegex.test(walletId)){
+    WalletDataService.get(walletId)
       .then(response => {
         setCurrentWallet(response.data);
         console.log(response.data);
       })
       .catch(e => {
-        alert(e.response.data.message);
+        alert("Wallet id Not Found");
+        walletDetails.history.push("/wallets");
         console.log(e);
       });
+    }else{
+      alert("Invalid Request");
+      walletDetails.history.push("/wallets");
+    }
   };
 
   useEffect(() => {
@@ -39,18 +46,18 @@ const Wallet = walletDetails => {
   };
 
   const openWallet = (walletId) => {
-    walletDetails.history.push("/wallet/" + walletId);
+    walletDetails.history.push("/wallets/" + walletId);
   };
 
   const openWalletTransfer = (walletId) => {
-    walletDetails.history.push("/fundtransfer/" + walletId);
+    walletDetails.history.push("/wallets/"+walletId+"/transfer");
   };
 
   const columns = useMemo(
     () => [
       {
-        Header: "Name",
-        accessor: "name",
+        Header: "Message",
+        accessor: "message",
       },
       {
         Header: "type",
@@ -69,7 +76,7 @@ const Wallet = walletDetails => {
         accessor: "created",
       },
       {
-        Header: "CreatedBy",
+        Header: "Created By",
         accessor: "createdBy",
       },
     ],
@@ -120,7 +127,7 @@ const Wallet = walletDetails => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="emailId">EmailId</label>
+              <label htmlFor="emailId">Email Id</label>
               <input
                 type="text"
                 className="form-control"

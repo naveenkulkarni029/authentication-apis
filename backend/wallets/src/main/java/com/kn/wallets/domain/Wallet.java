@@ -17,8 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.hibernate.annotations.Fetch;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -39,36 +37,37 @@ public class Wallet implements Serializable {
 	@ApiModelProperty(hidden = true)
 	private long walletId;
 
-	@Column(name = "wallet_name")
+	@Column(name = "wallet_name", nullable = false)
 	private String name;
 
 	@Column(name = "wallet_amount")
 	private long amount;
 
-	@Column(name = "email_id")
+	@Column(name = "email_id", nullable = false)
 	private String emailId;
 
 	@OneToMany(targetEntity = Transaction.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "wallet_id")
+	@ApiModelProperty(hidden = true)
 	private List<Transaction> transactions = new ArrayList<>();
 
 	@ApiModelProperty(hidden = true)
-	@Column(nullable = false, updatable = false)
+	@Column(nullable = false, updatable = false, name = "create_by")
 	@JsonIgnore
 	private String createdBy;
 
 	@ApiModelProperty(hidden = true)
-	@Column(nullable = false, updatable = false)
+	@Column(nullable = false, updatable = false, name = "created_on")
 	@JsonIgnore
 	private LocalDateTime created = LocalDateTime.now();
 
 	@ApiModelProperty(hidden = true)
-	@Column(nullable = true)
+	@Column(nullable = true, name = "modified_by")
 	@JsonIgnore
 	private String modifiedBy;
 
 	@ApiModelProperty(hidden = true)
-	@Column(nullable = true)
+	@Column(nullable = true, name = "modified_on")
 	@JsonIgnore
 	private LocalDateTime modified;
 

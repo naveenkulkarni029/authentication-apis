@@ -6,7 +6,7 @@ const CreateWallet = createWallet => {
     walletId: null,
     name: "",
     emailId: "",
-    amount: 0,
+    amount: "",
   };
 
 
@@ -18,14 +18,20 @@ const CreateWallet = createWallet => {
   };
 
   const saveWallet = () => {
-    const nameRegex=/^(([A-Za-z]+[,.]?[ ]?|[a-z]+['-]?)+)$/
+    const nameRegex= /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
     if(!Wallet.name || nameRegex.test(Wallet.name) === false){
       alert("Invalid Name Format");
     return false;
     }
-    const regex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-    if(!Wallet.emailId || regex.test(Wallet.emailId) === false){
+    const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if(!Wallet.emailId || emailRegex.test(Wallet.emailId) === false){
       alert("Invalid Email id Format");
+    return false;
+    }
+
+    const idRegex = /^\d+$/;
+    if(!idRegex.test(Wallet.amount)){
+    alert("Invalid Amount format, allowed positive number without decimal only");
     return false;
     }
 
@@ -83,7 +89,7 @@ const CreateWallet = createWallet => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="emailId">emailId</label>
+            <label htmlFor="emailId">Email Id</label>
             <input
               type="text"
               className="form-control"
@@ -109,24 +115,24 @@ const CreateWallet = createWallet => {
             />
           </div>
 
-<         div class="row">
-  <div class="col-md-4">
+<         div className="row">
+  <div className="col-sm-4">
           <button onClick={saveWallet} className="btn btn-outline-success btn-sm">
-            Create Wallet <br></br><i class="far fa-plus-square"></i>
+            Create Wallet <br></br><i className="far fa-plus-square"></i>
           </button>
           </div>
-<div class="col-md-4">
+<div className="col-sm-4">
           <button onClick={newWallet} className="btn btn-outline-secondary btn-sm">
-            Clear Details <br></br><i class="fas fa-hands-wash"></i>
+            Clear Details <br></br><i className="fas fa-hands-wash"></i>
           </button>
           </div>
-<div class="col-sm-4">
-           <button class="btn btn-outline-info btn-sm" onClick={cancelRequest}>
+<div className="col-sm-4">
+           <button className="btn btn-outline-info btn-sm" onClick={cancelRequest}>
             Back 
             to
              Wallets 
              <br></br>
-            <i class="fas fa-arrow-left"></i>
+            <i className="fas fa-arrow-left"></i>
             
           </button>
           </div>

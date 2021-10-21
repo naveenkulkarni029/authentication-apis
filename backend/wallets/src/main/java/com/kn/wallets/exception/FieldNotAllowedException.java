@@ -1,14 +1,15 @@
 package com.kn.wallets.exception;
 
-public class NegativeAmountException extends RuntimeException {
+public class FieldNotAllowedException extends RuntimeException {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public NegativeAmountException(String message) {
+	public FieldNotAllowedException(String message) {
 		super(message);
 		// TODO Auto-generated constructor stub
 	}
+
 }

@@ -8,22 +8,29 @@ const Wallet = props => {
     name: "",
     email: "",
     amount: "",
-    transferAmount: 0,
+    transferAmount: "",
     transactions:[]
   };
 
   const [currentWallet, setCurrentWallet] = useState(initialWalletState);
 
   const getWallet = walletId => {
+    const idRegex = /^\d+$/;
+    if(idRegex.test(walletId)){
     WalletDataService.get(walletId)
       .then(response => {
         setCurrentWallet(response.data);
         console.log(response.data);
       })
       .catch(e => {
-        alert(e.response.data.message)
+        alert("Wallet id Not Found");
+        props.history.push("/wallets");
         console.log(e);
       });
+    }else{
+      alert("Invalid Request");
+      props.history.push("/wallets");
+    }
   };
 
   useEffect(() => {
@@ -36,22 +43,20 @@ const Wallet = props => {
   };
 
   const creditWallet = (walletId) => {
-    if (currentWallet.transferAmount === undefined || currentWallet.transferAmount === ''){
-      alert("Transfer Amount cannot be empty / Zero / Format Not allowed");
-      return false;
+
+    const idRegex = /^\d+$/;
+    if(!idRegex.test(currentWallet.transferAmount)){
+    alert("Invalid Amount format, allowed positive number without decimal only");
+    return false;
     }
     var localTransferAmount = parseInt(currentWallet.transferAmount);
     if(localTransferAmount === 0){
       alert("Transfer Amount cannot be Zero");
       return false;
     }
-    if(localTransferAmount < 0){
-      alert("Negative Amount Not Allowed");
-      return false;
-    }
    const transaction= {
       type: "CREDIT",
-      name: "Add to Wallet",
+      message: "Add to Wallet",
       transactionAmount: localTransferAmount
     }
     console.log(transaction);
@@ -69,22 +74,20 @@ const Wallet = props => {
   };
 
   const debitWallet = (walletId) => {
-    if (currentWallet.transferAmount === undefined || currentWallet.transferAmount === ''){
-      alert("Transfer Amount cannot be empty / Zero / Format Not allowed");
-      return false;
+    const idRegex = /^\d+$/;
+    if(!idRegex.test(currentWallet.transferAmount)){
+    alert("Invalid Amount format, allowed positive number without decimal only");
+    return false;
     }
     var localTransferAmount = parseInt(currentWallet.transferAmount);
     if(localTransferAmount === 0){
       alert("Transfer Amount cannot be Zero");
       return false;
     }
-    if(localTransferAmount < 0){
-      alert("Negative Amount Not Allowed");
-      return false;
-    }
+    
    const transaction= {
       type: "DEBIT",
-      name: "Withdraw from Wallet",
+      message: "Withdraw from Wallet",
       transactionAmount: localTransferAmount
     }
     console.log(transaction);
@@ -108,8 +111,8 @@ const Wallet = props => {
   const columns = useMemo(
     () => [
       {
-        Header: "Name",
-        accessor: "name",
+        Header: "Message",
+        accessor: "message",
       },
       {
         Header: "type",
@@ -128,7 +131,7 @@ const Wallet = props => {
         accessor: "created",
       },
       {
-        Header: "CreatedBy",
+        Header: "Created By",
         accessor: "createdBy",
       },
     ],
@@ -179,7 +182,7 @@ const Wallet = props => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="emailId">EmailId</label>
+              <label htmlFor="emailId">Email Id</label>
               <input
                 type="text"
                 className="form-control"
@@ -226,7 +229,7 @@ const Wallet = props => {
           </div>
 
           <div className="col-sm-4">
-           <button type="submit" className="btn btn-outline-danger btn-sm" onClick={() => debitWallet(currentWallet.walletId)}>
+           <button className="btn btn-outline-danger btn-sm" onClick={() => debitWallet(currentWallet.walletId)}>
             Withdraw Wallet <br></br><i className="far fa-minus-square"></i>
           </button>
           </div>

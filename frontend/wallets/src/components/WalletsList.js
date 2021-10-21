@@ -17,24 +17,24 @@ const WalletsList = (props) => {
         setWallets(response.data);
       })
       .catch((e) => {
-        alert(e.response.data.message);
+        //alert(e.response.data.message);
         console.log(e);
       });
   };
 
   const openWallet = (rowIndex) => {
     const walletId = WalletsRef.current[rowIndex].walletId;
-    props.history.push("/wallet/" + walletId);
+    props.history.push("/wallets/" + walletId);
   };
 
   const openWalletDetails = (rowIndex) => {
     const walletId = WalletsRef.current[rowIndex].walletId;
-    props.history.push("/walletdetails/" + walletId);
+    props.history.push("/wallets/"+walletId+"/details");
   };
 
   const openWalletTransfer = (rowIndex) => {
     const walletId = WalletsRef.current[rowIndex].walletId;
-    props.history.push("/fundtransfer/" + walletId);
+    props.history.push("/wallets/"+walletId+"/transfer");
   };
 
 
@@ -45,7 +45,7 @@ const WalletsList = (props) => {
         accessor: "name",
       },
       {
-        Header: "Email",
+        Header: "Email Id",
         accessor: "emailId",
       },
       {

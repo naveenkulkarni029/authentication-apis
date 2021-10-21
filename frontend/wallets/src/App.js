@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Route, Link } from "react-router-dom";
+import { Switch, Route, Link, Redirect } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.css";
 import "@fortawesome/fontawesome-free/js/all.js";
@@ -26,7 +26,7 @@ function App() {
             </Link>
           </li>
           <li className="nav-item">
-            <Link to={"/create"} className="nav-link">
+            <Link to={"wallets/create"} className="nav-link">
               Create Wallet
             </Link>
           </li>
@@ -35,11 +35,12 @@ function App() {
 
       <div className="container mt-3">
         <Switch>
-          <Route exact path={["/", "/wallets"]} component={WalletsList} />
-          <Route exact path="/create" component={CreateWallet} />
-          <Route path="/wallet/:id" component={Wallet} />
-          <Route path="/walletdetails/:id" component={WalletDetails} />
-          <Route path="/fundtransfer/:id" component={WalletFundTransfer} />
+          <Route exact path={["/wallets"]} component={WalletsList} />
+          <Route exact path="/wallets/create" component={CreateWallet} />
+          <Route exact path="/wallets/:id" component={Wallet} />
+          <Route exact path="/wallets/:id/details" component={WalletDetails} />
+          <Route exact path="/wallets/:id/transfer" component={WalletFundTransfer} />
+          <Redirect from="/" to="/wallets" />
         </Switch>
       </div>
     </div>

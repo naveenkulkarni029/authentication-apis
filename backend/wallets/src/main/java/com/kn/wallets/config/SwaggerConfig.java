@@ -18,7 +18,7 @@ public class SwaggerConfig {
 	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2).groupName("wallets-1.0").select()
 				.apis(RequestHandlerSelectors.basePackage("com.kn.wallets.controller"))
-				.paths(PathSelectors.ant("/v1/**")).build().apiInfo(new ApiInfoBuilder().version("V1")
+				.paths(PathSelectors.ant("/api/v1/**")).build().apiInfo(new ApiInfoBuilder().version("V1")
 						.title("Wallets API").description("Documentation Wallets API V1").build());
 
 	}

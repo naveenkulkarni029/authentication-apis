@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kn.wallets.domain.Transaction;
 import com.kn.wallets.domain.Wallet;
 import com.kn.wallets.exception.DuplicateWalletException;
+import com.kn.wallets.exception.FieldNotAllowedException;
 import com.kn.wallets.exception.NegativeAmountException;
 import com.kn.wallets.exception.TransactionIsEmptyException;
 import com.kn.wallets.exception.WalletNotFoundException;
@@ -92,29 +93,39 @@ public class WalletServiceTest {
 		wallet.setAmount(-10);
 		Assertions.assertThrows(NegativeAmountException.class, () -> walletService.save(wallet));
 	}
+	
+	@Test
+	public void saveFieldNotAllowedEmailIdTest() {
+		Wallet wallet = new Wallet();
+		Assertions.assertThrows(FieldNotAllowedException.class, () -> walletService.save(wallet));
+	}
+	
+	@Test
+	public void saveFieldNotAllowedNameTest() {
+		Wallet wallet = new Wallet();
+		wallet.setEmailId("Naveen@gmail.com");
+		Assertions.assertThrows(FieldNotAllowedException.class, () -> walletService.save(wallet));
+	}
 
 	@Test
 	public void saveDuplicateDataExceptionTest() {
-		Wallet wallet = new Wallet();
-		List<Transaction> transactions = new ArrayList<>();
-		Transaction transaction = new Transaction();
-		transaction.setTransactionAmount(0);
-		transactions.add(transaction);
-		wallet.setTransactions(transactions);
+		Wallet wallet = getWallet();
 		Mockito.when(walletsRepository.saveAndFlush(Mockito.any())).thenThrow(DataIntegrityViolationException.class);
 		Assertions.assertThrows(DuplicateWalletException.class, () -> walletService.save(wallet));
 	}
 
 	@Test
 	public void saveSuccessTest() {
-		Wallet wallet = new Wallet();
-		List<Transaction> transactions = new ArrayList<>();
-		Transaction transaction = new Transaction();
-		transaction.setTransactionAmount(0);
-		transactions.add(transaction);
-		wallet.setTransactions(transactions);
+		Wallet wallet = getWallet();
 		Mockito.when(walletsRepository.saveAndFlush(Mockito.any())).thenReturn(responseWallet);
 		Wallet walletResponse = walletService.save(wallet);
 		Assertions.assertEquals(responseWallet, walletResponse);
+	}
+	
+	private Wallet getWallet() {
+		Wallet wallet = new Wallet();
+		wallet.setName("Naveen");
+		wallet.setEmailId("naveen@gmail.com");
+		return wallet;
 	}
 }

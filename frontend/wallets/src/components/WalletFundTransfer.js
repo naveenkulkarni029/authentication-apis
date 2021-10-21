@@ -7,7 +7,7 @@ const WalletFundTransfer = props => {
     name: "",
     email: "",
     amount: "",
-    transferAmount: 0,
+    transferAmount: null,
     targetWalletId:""
   };
   const [currentWallet, setCurrentWallet] = useState(initialWalletState);
@@ -19,16 +19,23 @@ const WalletFundTransfer = props => {
     getWallet(props.match.params.id);
   }, [props.match.params.id]);
 
-  const getWallet = id => {
-    WalletDataService.get(id)
+  const getWallet = walletId => {
+    const idRegex = /^\d+$/;
+    if(idRegex.test(walletId)){
+    WalletDataService.get(walletId)
       .then(response => {
         setCurrentWallet(response.data);
         console.log(response.data);
       })
       .catch(e => {
-        alert(e.response.data.message);
+        alert("Wallet id Not Found");
+        props.history.push("/wallets");
         console.log(e);
       });
+    }else{
+      alert("Invalid Request");
+      props.history.push("/wallets");
+    }
   };
 
   const retrieveWallets = () => {
@@ -62,27 +69,25 @@ const WalletFundTransfer = props => {
       return false;
     }
 
-    if(walletId == currentWallet.targetWalletId){
+    if(walletId === currentWallet.targetWalletId){
       alert("Same Wallet Transfer Not Allowed");
       return false;
     }
 
-    if (currentWallet.transferAmount === undefined || currentWallet.transferAmount === ''){
-      alert("Transfer Amount cannot be empty / Zero / Format Not allowed");
-      return false;
+    const idRegex = /^\d+$/;
+    if(!idRegex.test(currentWallet.transferAmount)){
+    alert("Invalid Amount format, allowed positive number without decimal only");
+    return false;
     }
+
     var localTransferAmount = parseInt(currentWallet.transferAmount);
     if(localTransferAmount === 0){
       alert("Transfer Amount cannot be Zero");
       return false;
     }
-    if(localTransferAmount < 0){
-      alert("Negative Amount Not Allowed");
-      return false;
-    }
 
     const transaction= {
-      name: "Fund Transfer",
+      message: "Fund Transfer",
       transactionAmount: localTransferAmount
     }
     WalletDataService.transferFunds(walletId, transaction, currentWallet.targetWalletId)
@@ -119,7 +124,7 @@ const WalletFundTransfer = props => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="emailId">EmailId</label>
+              <label htmlFor="emailId">Email Id</label>
               <input
                 type="text"
                 className="form-control"
@@ -169,13 +174,13 @@ const WalletFundTransfer = props => {
           </form>
 
           <div className="row">
-          <div className="col-md-4">
+          <div className="col-sm-4">
            <button className="btn btn-outline-success btn-sm" onClick={() => transferWallet(currentWallet.walletId)}>
             Transfer Fund <br></br><i className="fas fa-exchange-alt"></i>
           </button>
           </div>
 
-          <div className="col-md-4"></div>
+          <div className="col-sm-4"></div>
 
           <div className="col-sm-4">
            <button className="btn btn-outline-info btn-sm" onClick={cancelRequest}>

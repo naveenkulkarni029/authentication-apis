@@ -14,15 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
+import com.kn.wallets.constants.WalletsConstants;
 import com.kn.wallets.domain.Transaction;
 import com.kn.wallets.domain.TransactionType;
 import com.kn.wallets.domain.Wallet;
 import com.kn.wallets.exception.DuplicateWalletException;
+import com.kn.wallets.exception.FieldNotAllowedException;
 import com.kn.wallets.exception.NegativeAmountException;
 import com.kn.wallets.exception.SameWalletTransferException;
-import com.kn.wallets.exception.TransactionIsEmptyException;
 import com.kn.wallets.exception.WalletNotFoundException;
 import com.kn.wallets.exception.ZeroAmountTransferException;
 import com.kn.wallets.repository.WalletsRepository;
@@ -52,7 +53,7 @@ public class WalletsServiceImpl implements WalletsService {
 		log.info("Service called to retrieve wallet: Id: " + walletId);
 		Optional<Wallet> walletOptional = walletsRepository.findById(walletId);
 		Wallet wallet = walletOptional
-				.orElseThrow(() -> new WalletNotFoundException("walletId " + walletId + " not found"));
+				.orElseThrow(() -> new WalletNotFoundException(WalletsConstants.WALLET_NOT_FOUND_MESSAGE));
 		log.info("Service fetched wallet retrieve wallet: Id: " + walletId + " is " + wallet);
 		Comparator<Transaction> reverseComparator = (t1, t2) -> {
 			return (t2.getCreated()).compareTo(t1.getCreated());
@@ -66,16 +67,25 @@ public class WalletsServiceImpl implements WalletsService {
 		log.info("Service called to save wallet: " + wallet);
 		try {
 			if (wallet.getAmount() < 0) {
-				log.info("Negative Amount not allowed while creating a wallet");
-				throw new NegativeAmountException("Negative Amount not allowed while creating a wallet");
+				log.info(WalletsConstants.NEGATIVE_AMOUNT_MESSAGE);
+				throw new NegativeAmountException(WalletsConstants.NEGATIVE_AMOUNT_MESSAGE);
+			}
+			if(!StringUtils.hasText(wallet.getEmailId())) {
+				throw new FieldNotAllowedException(WalletsConstants.EMAIL_NOT_BLANK_MESSAGE);
+			}
+			
+			if(!StringUtils.hasText(wallet.getName())) {
+				throw new FieldNotAllowedException(WalletsConstants.NAME_NOT_BLANK_MESSAGE);
 			}
 			if (wallet.getAmount() > 0) {
 				List<Transaction> transactions = new ArrayList<>();
 				Transaction transaction = new Transaction();
-				transaction.setName("First Transaction");
-				transaction.setType(TransactionType.CREDIT);
-				transaction.setTransactionReferenceId(UUID.randomUUID().toString() + "/SELF/" + TransactionType.CREDIT);
-				transaction.setCreatedBy("SELF");
+				TransactionType transactionType = TransactionType.CREDIT;
+				transaction.setMessage(WalletsConstants.INITIAL_TRANSACTION);
+				transaction.setType(transactionType);
+				String txRefId = getTxRefId(WalletsConstants.SELF, transactionType);
+				transaction.setTransactionReferenceId(txRefId);
+				transaction.setCreatedBy(WalletsConstants.SELF);
 				transaction.setTransactionAmount(wallet.getAmount());
 				transactions.add(transaction);
 				wallet.setTransactions(transactions);
@@ -84,42 +94,41 @@ public class WalletsServiceImpl implements WalletsService {
 			log.info("wallet object before calling the repository: " + wallet);
 			return walletsRepository.saveAndFlush(wallet);
 		} catch (DataIntegrityViolationException ex) {
-			log.info("email id already exists", ex);
-			throw new DuplicateWalletException("Email id already Exists");
+			log.info(WalletsConstants.EMAIL_ID_EXIST_MESSAGE, ex);
+			throw new DuplicateWalletException(WalletsConstants.EMAIL_ID_EXIST_MESSAGE);
 		}
 	}
 
 	@Override
 	public Wallet updateWallet(long walletId, Transaction transaction) {
 		if (transaction.getTransactionAmount() == 0) {
-			log.info("Cannot transfer Zero Amount");
-			throw new ZeroAmountTransferException("Cannot transfer Zero Amount");
+			log.info(WalletsConstants.AMOUNT_ZERO_MESSAGE);
+			throw new ZeroAmountTransferException(WalletsConstants.AMOUNT_ZERO_MESSAGE);
 		}
 
 		if (transaction.getTransactionAmount() < 0) {
-			log.info("Negative Amount not allowed");
-			throw new NegativeAmountException("Negative Amount not allowed");
+			log.info(WalletsConstants.NEGATIVE_AMOUNT_MESSAGE);
+			throw new NegativeAmountException(WalletsConstants.NEGATIVE_AMOUNT_MESSAGE);
 		}
 		Wallet wallet = getWalletById(walletId);
+		long walletAmount = wallet.getAmount();
+		long transactionAmount = transaction.getTransactionAmount();
 		if (TransactionType.DEBIT.equals(transaction.getType())) {
-			long walletAmount = wallet.getAmount();
-			long transactionAmount = transaction.getTransactionAmount();
 			if (transactionAmount <= walletAmount) {
-				wallet.setAmount(walletAmount - transactionAmount);
+				wallet.setAmount(subtractAmount(walletAmount, transactionAmount));
 			} else {
-				log.info("Debit amount Requested on Wallet is greater than Available amount in wallet ");
-				throw new NegativeAmountException(
-						"Debit amount Requested on Wallet is greater than Available amount in wallet ");
+				log.info(WalletsConstants.AVAILABLE_LESS_THAN_DEBIT_MESSAGE);
+				throw new NegativeAmountException(WalletsConstants.AVAILABLE_LESS_THAN_DEBIT_MESSAGE);
 			}
+		} else if (TransactionType.CREDIT.equals(transaction.getType())) {
+			wallet.setAmount(addAmount(walletAmount, transactionAmount));
 		}
-		if (TransactionType.CREDIT.equals(transaction.getType())) {
-			wallet.setAmount(wallet.getAmount() + transaction.getTransactionAmount());
-		}
-		transaction.setTransactionReferenceId(UUID.randomUUID().toString() + "/SELF/" + transaction.getType());
-		transaction.setCreatedBy("SELF");
+		String txRefId = getTxRefId(WalletsConstants.SELF, transaction.getType());
+		transaction.setTransactionReferenceId(txRefId);
+		transaction.setCreatedBy(WalletsConstants.SELF);
 		wallet.getTransactions().add(transaction);
 		wallet.setModified(LocalDateTime.now());
-		wallet.setModifiedBy("SELF");
+		wallet.setModifiedBy(WalletsConstants.SELF);
 		Wallet responseWallet = walletsRepository.saveAndFlush(wallet);
 		Comparator<Transaction> reverseComparator = (t1, t2) -> {
 			return (t2.getCreated()).compareTo(t1.getCreated());
@@ -131,36 +140,40 @@ public class WalletsServiceImpl implements WalletsService {
 	@Override
 	public List<Wallet> transferToWallet(long walletId, long targetWalletId, Transaction transaction) {
 		if (walletId == targetWalletId) {
-			log.info("Same wallet Transfer");
-			throw new SameWalletTransferException("Same wallet Transfer");
+			log.info(WalletsConstants.SAME_WALLET_MESSAGE);
+			throw new SameWalletTransferException(WalletsConstants.SAME_WALLET_MESSAGE);
 		}
 		if (transaction.getTransactionAmount() == 0) {
-			log.info("Cannot transfer Zero Amount");
-			throw new ZeroAmountTransferException("Cannot transfer Zero Amount");
+			log.info(WalletsConstants.AMOUNT_ZERO_MESSAGE);
+			throw new ZeroAmountTransferException(WalletsConstants.AMOUNT_ZERO_MESSAGE);
 		}
 
 		if (transaction.getTransactionAmount() < 0) {
-			log.info("Negative Amount not allowed");
-			throw new NegativeAmountException("Negative Amount not allowed");
+			log.info(WalletsConstants.NEGATIVE_AMOUNT_MESSAGE);
+			throw new NegativeAmountException(WalletsConstants.NEGATIVE_AMOUNT_MESSAGE);
 		}
 
 		Wallet sourceWallet = getWalletById(walletId);
+
 		long sourceWalletAmount = sourceWallet.getAmount();
 		long transactionAmount = transaction.getTransactionAmount();
+
 		String uuid = UUID.randomUUID().toString();
+
 		List<Wallet> wallets = new ArrayList<>();
+
 		if (transactionAmount <= sourceWalletAmount) {
 			Wallet targetWallet = getWalletById(targetWalletId);
 
-			sourceWallet.setAmount(sourceWalletAmount - transactionAmount);
+			sourceWallet.setAmount(subtractAmount(sourceWalletAmount, transactionAmount));
 			sourceWallet.setModified(LocalDateTime.now());
-			sourceWallet.setModifiedBy("SELF");
+			sourceWallet.setModifiedBy(WalletsConstants.SELF);
 
 			Transaction sourceTransaction = new Transaction();
 
 			sourceTransaction.setType(TransactionType.DEBIT);
-			sourceTransaction.setCreatedBy("SELF");
-			sourceTransaction.setName(transaction.getName());
+			sourceTransaction.setCreatedBy(WalletsConstants.SELF);
+			sourceTransaction.setMessage(transaction.getMessage());
 			sourceTransaction.setTransactionAmount(transaction.getTransactionAmount());
 
 			sourceTransaction.setTransactionReferenceId(
@@ -168,16 +181,17 @@ public class WalletsServiceImpl implements WalletsService {
 			sourceWallet.getTransactions().add(sourceTransaction);
 
 			long targetWalletAmount = targetWallet.getAmount();
-			targetWallet.setAmount(targetWalletAmount + transactionAmount);
+
+			targetWallet.setAmount(addAmount(targetWalletAmount, transactionAmount));
 			targetWallet.setModified(LocalDateTime.now());
-			targetWallet.setModifiedBy(sourceWallet.getEmailId());
-			
+			targetWallet.setModifiedBy(sourceWallet.getName() + "\n( " + sourceWallet.getEmailId() + " )");
+
 			Transaction targetTransaction = new Transaction();
 			targetTransaction.setType(TransactionType.CREDIT);
 
-			targetTransaction.setCreatedBy(sourceWallet.getEmailId());
+			targetTransaction.setCreatedBy(sourceWallet.getName() + "( " + sourceWallet.getEmailId() + " )");
 
-			targetTransaction.setName(transaction.getName());
+			targetTransaction.setMessage(transaction.getMessage());
 			targetTransaction.setTransactionAmount(transaction.getTransactionAmount());
 
 			targetTransaction.setTransactionReferenceId(
@@ -186,11 +200,24 @@ public class WalletsServiceImpl implements WalletsService {
 			wallets.add(sourceWallet);
 			wallets.add(targetWallet);
 		} else {
-			log.info("Debit amount Requested on Wallet is greater than Available amount in wallet ");
-			throw new NegativeAmountException(
-					"Debit amount Requested on Wallet is greater than Available amount in wallet ");
-		} 
+			log.info(WalletsConstants.AVAILABLE_LESS_THAN_DEBIT_MESSAGE);
+			throw new NegativeAmountException(WalletsConstants.AVAILABLE_LESS_THAN_DEBIT_MESSAGE);
+		}
 		return walletsRepository.saveAllAndFlush(wallets);
+	}
+
+	private String getTxRefId(String createdBy, TransactionType type) {
+		StringBuilder builder = new StringBuilder(UUID.randomUUID().toString());
+		builder.append("/").append(createdBy).append("/").append(type);
+		return builder.toString();
+	}
+
+	private long addAmount(long currentAmount, long transactionAmount) {
+		return currentAmount + transactionAmount;
+	}
+
+	private long subtractAmount(long currentAmount, long transactionAmount) {
+		return currentAmount - transactionAmount;
 	}
 
 }

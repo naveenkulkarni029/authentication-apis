@@ -5,7 +5,7 @@
   "emailId": "naveen@gmail.com",
   "transactions": [
     {
-      "name": "first Transaction",
+      "message": "Initial Transaction",
       "type": "CREDIT",
       "transactionAmount": 500,
       "transactionReferenceId": "8d5e9459-e47f-4ea6-90e0-0301a1bc4bdf/SELF/CREDIT"
