@@ -13,10 +13,11 @@ The folder helps develop Wallets Server Application using Java 8, Spring Boot, H
 1. Java 8.
 2. Maven 3.5+.
 3. Spring Boot 2.5.5 (latest version).
-4. Spring Tool Suite IDE recommended.
-5. Embedded H2 Database.
-6. Docker Engine version 19.03.0+ ( Tested version: 20.10.8 ).
-7. docker-compose version 1.29.2, build 5becea4c ( Tested ).
+4. Swagger 2.9.2
+5. Spring Tool Suite IDE recommended.
+6. Embedded H2 Database.
+7. Docker Engine version 19.03.0+ ( Tested version: 20.10.8 ).
+8. docker-compose version 1.29.2, build 5becea4c ( Tested ).
 
 ## Build and Run
 
