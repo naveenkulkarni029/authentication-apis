@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:16.13.1
 WORKDIR /wallets
 COPY package.json ./
 RUN npm install
