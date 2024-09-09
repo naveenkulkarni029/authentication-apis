@@ -13,7 +13,7 @@
 	<artifactId>wallets</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>wallets</name>
-	<description>Kuehne Nagel accounts-wallets</description>
+	<description>Accounts-wallets</description>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
